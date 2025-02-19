@@ -36,101 +36,6 @@ var (
 	sendoutfinish        chan int
 )
 
-// func (p *Pbft) mpropose(new map[string]int) {
-// 	for {
-// 		p.pbftlock.Lock()
-// 		if int(time.Now().Unix() - InitTime) > p.epoch*params.Config.Block_interval   && int(time.Now().Unix() - lastpropose) >= params.Config.Block_interval + utils.RandInt0To3(){
-// 			p.epoch++
-// 			p.pbftlock.Unlock()
-// 			break
-// 		}
-// 		p.pbftlock.Unlock()
-// 	}
-// 	p.sequenceLock.Lock() //通过锁强制要求上一个PBFTcommit完成新propose才能被提出
-// 	lastpropose = time.Now().Unix()
-// 	fmt.Println("开始epochChange")
-
-// 	r := &Request{}
-// 	r.Timestamp = time.Now().Unix()
-// 	r.Message.ID = getRandom()
-
-// 	// 对新的映射进行编码
-// 	var buff bytes.Buffer
-// 	enc := gob.NewEncoder(&buff)
-// 	err := enc.Encode(new)
-// 	if err != nil {
-// 		log.Panic(err)
-// 	}
-// 	r.Message.Content = buff.Bytes()
-
-// 	pbftbefore = time.Now().Unix()
-
-// 	//获取消息摘要
-// 	digest := getDigest(r)
-// 	fmt.Println("已将request存入临时消息池")
-// 	//存入临时消息池
-// 	p.mmessagePool[digest] = r
-
-// 	//拼接成PrePrepare，准备发往follower节点
-// 	pp := PrePrepare{r, digest, p.msequenceID, "EpochChange"}
-// 	b, err := json.Marshal(pp)
-// 	if err != nil {
-// 		log.Panic(err)
-// 	}
-// 	// fmt.Println("正在向其他节点进行进行PrePrepare广播 ...")
-// 	//进行PrePrepare广播
-// 	p.broadcast(cPrePrepare, b)
-// 	// fmt.Println("PrePrepare广播完成")
-// }
-
-// func (p *Pbft) spropose(inaccpool []*address_and_balance) {
-// 	for {
-// 		p.pbftlock.Lock()
-// 		if int(time.Now().Unix() - InitTime) > p.epoch*params.Config.Block_interval   && int(time.Now().Unix() - lastpropose) >= params.Config.Block_interval + utils.RandInt0To3(){
-// 			p.epoch++
-// 			p.pbftlock.Unlock()
-// 			break
-// 		}
-// 		p.pbftlock.Unlock()
-// 	}
-// 	fmt.Println("\n提出spropose1\n")
-// 	p.sequenceLock.Lock() //通过锁强制要求上一个PBFTcommit完成新propose才能被提出
-// 	lastpropose = time.Now().Unix()
-// 	fmt.Println("\n提出spropose2\n")
-
-// 	r := &Request{}
-// 	r.Timestamp = time.Now().Unix()
-// 	r.Message.ID = getRandom()
-
-// 	// 对新的映射进行编码
-// 	var buff bytes.Buffer
-// 	enc := gob.NewEncoder(&buff)
-// 	err := enc.Encode(inaccpool)
-// 	if err != nil {
-// 		log.Panic(err)
-// 	}
-// 	r.Message.Content = buff.Bytes()
-
-// 	pbftbefore = time.Now().Unix()
-
-// 	//获取消息摘要
-// 	digest := getDigest(r)
-// 	fmt.Println("已将request存入临时消息池")
-// 	//存入临时消息池
-// 	p.smessagePool[digest] = r
-
-// 	//拼接成PrePrepare，准备发往follower节点
-// 	pp := PrePrepare{r, digest, p.ssequenceID, "AccState"}
-// 	b, err := json.Marshal(pp)
-// 	if err != nil {
-// 		log.Panic(err)
-// 	}
-// 	// fmt.Println("正在向其他节点进行进行PrePrepare广播 ...")
-// 	//进行PrePrepare广播
-// 	p.broadcast(cPrePrepare, b)
-// 	// fmt.Println("PrePrepare广播完成")
-// }
-
 // 一个分片一个节点
 func (p *Pbft) mpropose(new map[string]int) {
 	for {
@@ -169,10 +74,10 @@ func (p *Pbft) spropose(inaccpool []*address_and_balance) {
 		}
 		p.pbftlock.Unlock()
 	}
-	fmt.Println("\n提出spropose1\n")
+	fmt.Println("提出spropose1")
 	p.sequenceLock.Lock() //通过锁强制要求上一个PBFTcommit完成新propose才能被提出
 	lastpropose = time.Now().Unix()
-	fmt.Println("\n提出spropose2\n")
+	fmt.Println("\n提出spropose2")
 
 	// 对新的映射进行编码
 	var buff bytes.Buffer
@@ -258,46 +163,6 @@ func (p *Pbft) SendOut(out map[string]int) {
 		}
 	}
 	fmt.Printf("\n%vms\n\n", time.Now().UnixMicro()-ccc)
-
-	// for k, v := range out {
-	// 	if outpool[v] == nil {
-	// 		outpool[v] = &BalancesAndPendings{}
-	// 	}
-	// 	hex_out, _ := hex.DecodeString(k)
-	// 	encoded_state, ok := p.Node.CurChain.StatusTrie.Get(hex_out)
-	// 	if !ok {
-	// 		log.Panic()
-	// 	}
-	// 	state := account.DecodeAccountState(encoded_state)
-	// 	balance := state.Balance
-
-	// 	pendingTXs := make([]*core.Transaction, 0)
-	// 	//   2.将交易池中关于账户的交易收集起来
-	// 	j := 0
-	// 	p.Node.CurChain.Tx_pool.Lock.Lock()
-	// 	hhh := time.Now().UnixMicro()
-	// 	for _, tx := range p.Node.CurChain.Tx_pool.Queue {
-	// 		// 如果sender是要出去的账户，且还不是后半, 则收集
-	// 		if hex.EncodeToString(tx.Sender) == k && !tx.IsRelay{
-	// 			pendingTXs = append(pendingTXs, tx)
-	// 			continue
-	// 		}
-	// 		//  如果recipient是要出去的账户，且已经是后半，则收集
-	// 		if hex.EncodeToString(tx.Recipient) == k && tx.IsRelay {
-	// 			pendingTXs = append(pendingTXs, tx)
-	// 			continue
-	// 		}
-	// 		// 否则，要么与该账户无关，要么该账户是recipient，但是sender部分还没处理
-	// 		p.Node.CurChain.Tx_pool.Queue[j] = tx
-	// 		j++
-	// 	}
-	// 	p.Node.CurChain.Tx_pool.Queue = p.Node.CurChain.Tx_pool.Queue[:j]
-	// 	ccc += time.Now().UnixMicro()-hhh
-	// 	p.Node.CurChain.Tx_pool.Lock.Unlock()
-
-	// 	outpool[v].List = append(outpool[v].List, &BalanceAndPending{Address: k, Balance: balance, PendingTxs: pendingTXs})
-	// }
-	// fmt.Printf("\n%vms\n\n",ccc)
 
 	for k, v := range params.NodeTable {
 		if k == config.ShardID {

@@ -78,8 +78,8 @@ func (p *Pbft) commit1(content []byte, pbftType string) {
 						} else {
 							commit_txs = append(commit_txs, v)
 							v.CommitTime = pbftend
-							var s string
-							s = fmt.Sprintf("%v %v %v %v %v %v %v %v %v %v %v %v %v %v %v %v %v %v", hex.EncodeToString(v.Sender), hex.EncodeToString(v.Recipient), v.Id, block.Header.Number, v.RequestTime-InitTime*1000, v.Second_RequestTime-InitTime*1000, v.CommitTime-v.RequestTime, v.LockTime-InitTime*1000, v.UnlockTime-InitTime*1000, v.LockTime2-InitTime*1000, v.UnlockTime2-InitTime*1000, v.Success, v.SenLock, v.RecLock, v.HalfLock, v.Sen_Suppose_on_chain, v.Rec_Suppose_on_chain, v.Relay_Lock)
+							// var s string
+							s := fmt.Sprintf("%v %v %v %v %v %v %v %v %v %v %v %v %v %v %v %v %v %v", hex.EncodeToString(v.Sender), hex.EncodeToString(v.Recipient), v.Id, block.Header.Number, v.RequestTime-InitTime*1000, v.Second_RequestTime-InitTime*1000, v.CommitTime-v.RequestTime, v.LockTime-InitTime*1000, v.UnlockTime-InitTime*1000, v.LockTime2-InitTime*1000, v.UnlockTime2-InitTime*1000, v.Success, v.SenLock, v.RecLock, v.HalfLock, v.Sen_Suppose_on_chain, v.Rec_Suppose_on_chain, v.Relay_Lock)
 							txlog.Write(strings.Split(s, " "))
 							// latency := pbftend - v.RequestTime
 							// if fromid != toid {
@@ -93,8 +93,8 @@ func (p *Pbft) commit1(content []byte, pbftType string) {
 					if params.ShardTable[params.Config.ShardID] == toid {
 						commit_txs = append(commit_txs, v)
 						v.CommitTime = pbftend
-						var s string
-						s = fmt.Sprintf("%v %v %v %v %v %v %v %v %v %v %v %v %v %v %v %v %v %v", hex.EncodeToString(v.Sender), hex.EncodeToString(v.Recipient), v.Id, block.Header.Number, v.RequestTime-InitTime*1000, v.Second_RequestTime-InitTime*1000, v.CommitTime-v.RequestTime, v.LockTime-InitTime*1000, v.UnlockTime-InitTime*1000, v.LockTime2-InitTime*1000, v.UnlockTime2-InitTime*1000, v.Success, v.SenLock, v.RecLock, v.HalfLock, v.Sen_Suppose_on_chain, v.Rec_Suppose_on_chain, v.Relay_Lock)
+						// var s string
+						s := fmt.Sprintf("%v %v %v %v %v %v %v %v %v %v %v %v %v %v %v %v %v %v", hex.EncodeToString(v.Sender), hex.EncodeToString(v.Recipient), v.Id, block.Header.Number, v.RequestTime-InitTime*1000, v.Second_RequestTime-InitTime*1000, v.CommitTime-v.RequestTime, v.LockTime-InitTime*1000, v.UnlockTime-InitTime*1000, v.LockTime2-InitTime*1000, v.UnlockTime2-InitTime*1000, v.Success, v.SenLock, v.RecLock, v.HalfLock, v.Sen_Suppose_on_chain, v.Rec_Suppose_on_chain, v.Relay_Lock)
 						txlog.Write(strings.Split(s, " "))
 						// latency := pbftend - v.RequestTime
 						// if fromid != toid {

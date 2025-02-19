@@ -1,0 +1,1 @@
+timestamp,blockHeight,tx_total,tx_normal,tx_relay_sender,tx_relay_receiver,tx_committed,pbfttime,mig1,mig2,ann,ns,locked_txs
