@@ -19,7 +19,7 @@ type BlockHeader struct {
 	ParentHash []byte `json:"parentHash"       gencodec:"required"`
 	StateRoot  []byte `json:"stateRoot"        gencodec:"required"`
 	TxHash     []byte `json:"transactionsRoot" gencodec:"required"`
-	MigHash     []byte `json:"migrationRoot" gencodec:"required"`
+	MigHash    []byte `json:"migrationRoot" gencodec:"required"`
 	Number     int    `json:"number"           gencodec:"required"`
 	Time       uint64 `json:"timestamp"        gencodec:"required"`
 }
@@ -68,12 +68,12 @@ func (bh *BlockHeader) PrintBlockHeader() {
 type Block struct {
 	Header       *BlockHeader
 	Transactions []*Transaction
-	TXmig1s  	 []*TXmig1
-	TXmig2s  	 []*TXmig2
-	Anns  	 []*TXann
-	NSs      []*TXns
+	TXmig1s      []*TXmig1
+	TXmig2s      []*TXmig2
+	Anns         []*TXann
+	NSs          []*TXns
 	Hash         []byte
-	Fee			 float64
+	Fee          float64
 }
 
 // core/types/block.go
@@ -81,10 +81,10 @@ func NewBlock(blockHeader *BlockHeader, txs []*Transaction, txmig1s []*TXmig1, t
 	b := &Block{
 		Header:       blockHeader,
 		Transactions: txs,
-		TXmig1s: txmig1s,
-		TXmig2s:  txmig2s,
-		Anns:  anns,
-		NSs: 	  nss,
+		TXmig1s:      txmig1s,
+		TXmig2s:      txmig2s,
+		Anns:         anns,
+		NSs:          nss,
 	}
 
 	return b
@@ -136,49 +136,3 @@ func DecodeBlock(to_decode []byte) *Block {
 
 	return &block
 }
-
-// // CopyHeader creates a deep copy of a block header to prevent side effects from
-// // modifying a header variable.
-// func CopyHeader(h *BlockHeader) *BlockHeader {
-// 	cpy := *h
-// 	if cpy.Number = new(big.Int); h.Number != nil {
-// 		cpy.Number.Set(h.Number)
-// 	}
-// 	return &cpy
-// }
-
-// Hash returns the keccak256 hash of b's header.
-// The hash is computed on the first call and cached thereafter.
-// func (b *Block) GetHash() common.Hash {
-// 	if hash := b.Hash.Load(); hash != nil {
-// 		return hash.(common.Hash)
-// 	}
-// 	v := b.Header.Hash()
-// 	b.Hash.Store(v)
-// 	return v
-// }
-
-// func (b *Block) Number() *big.Int { return new(big.Int).Set(b.Header.Number) }
-
-// func (b *Block) NumberU64() uint64 { return b.Header.Number.Uint64() }
-
-// // Uint64 returns the integer value of a block nonce.
-// func (n BlockNonce) Uint64() uint64 {
-// 	return binary.BigEndian.Uint64(n[:])
-// }
-// func (b *Block) GetHeader() *BlockHeader { return CopyHeader(b.Header) }
-// func (b *Block) Root() common.Hash       { return b.Header.Root }
-
-// // Body returns the non-header content of the block.
-// func (b *Block) Body() *Body { return &Body{b.Transactions} }
-
-// // WithBody returns a new block with the given transaction and uncle contents.
-// func (b *Block) WithBody(transactions []*Transaction) *Block {
-// 	block := &Block{
-// 		Header:       CopyHeader(b.Header),
-// 		Transactions: make([]*Transaction, len(transactions)),
-// 	}
-// 	copy(block.Transactions, transactions)
-
-// 	return block
-// }

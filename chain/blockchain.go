@@ -146,7 +146,7 @@ func (bc *BlockChain) AddBlock(block *core.Block) map[string]*big.Int {
 
 	updatetree := time.Now().UnixMilli()
 	stateroothash, outbalance := bc.getUpdatedTreeOfState(1, block.Header.Number, block.Transactions, block.TXmig1s, block.TXmig2s, block.Anns, block.NSs)
-	if !bytes.Equal(block.Header.StateRoot, stateroothash){
+	if !bytes.Equal(block.Header.StateRoot, stateroothash) {
 		log.Panicf("二者不等，Ins长度为%v\n", len(block.TXmig2s))
 	}
 	fmt.Printf("更新树花时间为: %v\n", time.Now().UnixMilli()-updatetree)
@@ -195,15 +195,6 @@ func (bc *BlockChain) AddBlock(block *core.Block) map[string]*big.Int {
 	// }
 	return outbalance
 }
-
-// func (bc *BlockChain) genRelayTxs(block *core.Block) {
-// 	for _, tx := range block.Transactions {
-// 		shardID := account.Addr2Shard(hex.EncodeToString(tx.Recipient))
-// 		if shardID != params.ShardTable[bc.ChainConfig.ShardID] {
-// 			bc.Tx_pool.AddRelayTx(tx, params.ShardTableInt2Str[shardID])
-// 		}
-// 	}
-// }
 
 func (bc *BlockChain) GenerateBlock(id int) *core.Block {
 	quota := params.Config.MaxMigSize
@@ -287,9 +278,9 @@ func (bc *BlockChain) GenerateBlock(id int) *core.Block {
 		}
 	} else if (!params.Config.Bu_Tong_Bi_Li && !params.Config.Bu_Tong_Shi_Jian && !params.Config.Fail && !params.Config.Cross_Chain) || id != 1 {
 		if params.Config.Algorithm || params.Config.Pressure {
-			txs, queueLen = bc.Tx_pool.FetchTxs2Pack(params.Config.MaxBlockSize - len(mig1s) - len(mig2s) - len(anns) - len(nss), bc.CurrentBlock.Header.Number + 1)
+			txs, queueLen = bc.Tx_pool.FetchTxs2Pack(params.Config.MaxBlockSize-len(mig1s)-len(mig2s)-len(anns)-len(nss), bc.CurrentBlock.Header.Number+1)
 		} else {
-			txs, queueLen = bc.Tx_pool.FetchTxs2Pack(params.Config.MaxBlockSize - len(mig1s) - len(mig2s) - len(anns) - len(nss), bc.CurrentBlock.Header.Number + 1)
+			txs, queueLen = bc.Tx_pool.FetchTxs2Pack(params.Config.MaxBlockSize-len(mig1s)-len(mig2s)-len(anns)-len(nss), bc.CurrentBlock.Header.Number+1)
 			// txs = bc.Tx_pool.FetchTxs2Pack(params.Config.MaxBlockSize - params.Config.MaxMigSize + quota)
 		}
 	}
@@ -316,13 +307,13 @@ func (bc *BlockChain) GenerateBlock(id int) *core.Block {
 	if !params.Config.Stop_When_Migrating {
 		if !params.Config.Lock_Acc_When_Migrating {
 			account.Outing_Acc_Before_Announce_Lock.Lock()
-			for _,lockedtxs := range bc.Tx_pool.Outing_Before_Announce_TX_Pools {
+			for _, lockedtxs := range bc.Tx_pool.Outing_Before_Announce_TX_Pools {
 				queueLen += len(lockedtxs)
 			}
 			account.Outing_Acc_Before_Announce_Lock.Unlock()
-		}else {
+		} else {
 			account.Lock_Acc_Lock.Lock()
-			for _,lockedtxs := range bc.Tx_pool.Locking_TX_Pools {
+			for _, lockedtxs := range bc.Tx_pool.Locking_TX_Pools {
 				queueLen += len(lockedtxs)
 			}
 			account.Lock_Acc_Lock.Unlock()
@@ -385,7 +376,6 @@ func (bc *BlockChain) getUpdatedTreeOfState(commit int, height int, txs []*core.
 			st.Update(tx.Sender, account_state.Encode())
 		}
 
-
 		r_state_enc := st.Get(tx.Recipient)
 		if r_state_enc == nil {
 			fmt.Printf("rec属于该分片吗：%v\n", account.AccountInOwnShard[hex.EncodeToString(tx.Recipient)])
@@ -399,7 +389,7 @@ func (bc *BlockChain) getUpdatedTreeOfState(commit int, height int, txs []*core.
 		if account_state.Location != params.ShardTable[bc.ChainConfig.ShardID] {
 			continue
 			// 接收者为锁定账户，不对该状态进行修改
-		} else if account_state.Migrate != -1 && params.Config.Lock_Acc_When_Migrating{
+		} else if account_state.Migrate != -1 && params.Config.Lock_Acc_When_Migrating {
 			continue
 		}
 
@@ -418,7 +408,6 @@ func (bc *BlockChain) getUpdatedTreeOfState(commit int, height int, txs []*core.
 		// 	account.Lock_Acc_Lock.Unlock()
 		// }
 
-		
 		account_state.Balance.Add(account_state.Balance, tx.Value)
 		if commit == 1 && account_state.Migrate != -1 {
 			tx.HalfLock = true
