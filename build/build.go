@@ -57,6 +57,8 @@ func BuildSupervisor(nnm, snm uint64) {
 	lsn := new(supervisor.Supervisor)
 	lsn.NewSupervisor(params.SupervisorAddr, initConfig(123, nnm, 123, snm), params.CommitteeMethod[methodID], measureMod...)
 	go lsn.TcpListen()
+
+	go lsn.QueryForAcc("0x32be343b94f860124dc4fee278fdcbd38c102d88")
 	time.Sleep(5000 * time.Millisecond)
 	lsn.SupervisorTxHandling()
 }

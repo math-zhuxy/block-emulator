@@ -11,8 +11,10 @@ import (
 	"blockEmulator/supervisor/measure"
 	"blockEmulator/supervisor/signal"
 	"blockEmulator/supervisor/supervisor_log"
+	"blockEmulator/utils"
 	"bufio"
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net"
@@ -91,6 +93,33 @@ func (d *Supervisor) NewSupervisor(ip string, pcc *params.ChainConfig, committee
 	}
 }
 
+func (d *Supervisor) QueryForAcc(address string) {
+	fmt.Println("Start querying ...")
+	for {
+		time.Sleep(5 * time.Second)
+		fmt.Println("Start query")
+		sii := message.QueryACC{
+			Address: address,
+		}
+		sByte, err := json.Marshal(sii)
+		if err != nil {
+			log.Panic()
+		}
+		msg_send := message.MergeMessage(message.DQueryForAcc, sByte)
+		shard_id := utils.Addr2Shard(address)
+		go networks.TcpDial(msg_send, d.Ip_nodeTable[uint64(shard_id)][0])
+	}
+}
+
+func (d *Supervisor) handleReplyAcc(content []byte) {
+	bim := new(message.ReplyToAcc)
+	err := json.Unmarshal(content, bim)
+	if err != nil {
+		log.Panic()
+	}
+	fmt.Printf("AAAAAAAAAAAAAAAAAAAAA Account balance of %v is %v\n", bim.Address, bim.Balance)
+}
+
 // Supervisor received the block information from the leaders, and handle these
 // message to measure the performances.
 func (d *Supervisor) handleBlockInfos(content []byte) {
@@ -146,6 +175,10 @@ func (d *Supervisor) handleMessage(msg []byte) {
 	case message.CBlockInfo:
 		d.handleBlockInfos(content)
 		// add codes for more functionality
+
+	case message.DReplyToAcc:
+		d.handleReplyAcc(content)
+
 	default:
 		d.comMod.HandleOtherMessage(msg)
 		for _, mm := range d.testMeasureMods {
