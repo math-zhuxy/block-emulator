@@ -128,6 +128,7 @@ func (bc *BlockChain) GetUpdateStatusTrie(txs []*core.Transaction) common.Hash {
 			var r_state *core.AccountState
 			if r_state_enc == nil {
 				// fmt.Println("missing account RECIPIENT, now adding account")
+				// test
 				ib := new(big.Int)
 				ib.Add(ib, params.Init_Balance)
 				r_state = &core.AccountState{
